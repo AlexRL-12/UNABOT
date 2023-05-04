@@ -1,0 +1,128 @@
+int const motorHorarioA=13;
+int const motorAntihorarioA=12;
+int const motorHorarioB=10;
+int const motorAntihorarioB=11;
+int const izquierdaIn=A1;
+int const derechaIn=A2;
+int sensorA=0;
+int sensorB=0;
+
+char opcion ='s' ;//a: avanzar, i: izquierda, d :derecha, s:stop
+
+void setup()
+{
+  Serial.begin(9600);
+  //pines de salida al motor A
+  pinMode(motorHorarioA,OUTPUT); 
+  pinMode(motorAntihorarioA,OUTPUT);
+  //pines de salida al motor B
+  pinMode(motorHorarioB,OUTPUT); 
+  pinMode(motorAntihorarioB,OUTPUT);
+  //pines de entrada de los sensores
+  pinMode(derechaIn,INPUT); 
+  pinMode(izquierdaIn,INPUT);
+  //Inicializacion********
+  digitalWrite(motorHorarioA, 0);
+  digitalWrite(motorAntihorarioA, 0);
+  digitalWrite(motorHorarioB, 0);
+  digitalWrite(motorAntihorarioB, 0);
+}
+
+void loop()
+{
+  menu();
+}
+
+void menu()
+{
+  sensorA=analogRead(izquierdaIn);
+  sensorB=analogRead(derechaIn);
+  Serial.print(sensorA);
+  Serial.print("\n");
+  Serial.print(sensorB);
+  Serial.print("\n");
+  switch(opcion)
+  {
+    case's':case'a':
+      if(sensorA<300)
+      {
+        opcion='i';
+        izquierda();
+        
+      }else if(sensorB<300)
+      {
+        opcion='d';
+        derecha();
+      }else
+      {
+        opcion='a';
+        avanzar();
+      }
+    	break;
+    case'i':
+    	if(sensorA>300)
+        {
+          opcion='a';
+          avanzar();
+        }
+    	/*else if(sensorB<300)
+        {
+          opcion='s';
+          stop();
+        }*/
+		break;
+    case'd':
+        if(sensorB>300)
+        {
+          opcion='a';
+          avanzar();
+        }
+    	/*else if(sensorA<300)
+        {
+          opcion='s';
+          stop();
+        }*/
+        break;
+  }
+}
+
+void izquierda()
+{
+  digitalWrite(motorHorarioA, 1);
+  digitalWrite(motorAntihorarioA, 0);
+  digitalWrite(motorHorarioB, 0);
+  digitalWrite(motorAntihorarioB, 1);
+  Serial.print("izquierda\n");
+  delay(100);
+}
+
+void derecha()
+{
+  digitalWrite(motorHorarioA, 0);
+  digitalWrite(motorAntihorarioA, 1);
+  digitalWrite(motorHorarioB, 1);
+  digitalWrite(motorAntihorarioB, 0);
+  Serial.print("derecha\n");
+  delay(100);
+}
+
+void stop()
+{
+  digitalWrite(motorHorarioA, 0);
+  digitalWrite(motorAntihorarioA, 0);
+  digitalWrite(motorHorarioB, 0);
+  digitalWrite(motorAntihorarioB, 0);
+  Serial.print("stop\n");
+  delay(100);
+}
+
+void avanzar()
+{
+  digitalWrite(motorHorarioA, 1);
+  digitalWrite(motorAntihorarioA, 0);
+  digitalWrite(motorHorarioB, 1);
+  digitalWrite(motorAntihorarioB, 0);
+  Serial.print("avanzar\n");
+  delay(100);
+}
+  
