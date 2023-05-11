@@ -1,0 +1,102 @@
+// Incluye la librería para controlar los pines
+#include <Arduino.h>
+
+// Define los pines de control del primer motor (Motor A)
+const int pinEnableA = 4;
+const int pinInput1A = 5;
+const int pinInput2A = 6;
+
+// Define los pines de control del segundo motor (Motor B)
+const int pinEnableB = 8;
+const int pinInput1B = 9;
+const int pinInput2B = 10;
+
+const int ledPIN = 9;
+
+
+const int sensorPin = A1;  // Pin analógico A1 conectado al sensor
+int sensorThreshold = 70;  // Umbral del sensor
+
+
+void setup() {
+
+
+  //led
+  Serial.begin(9600);    //iniciar puerto serie
+  pinMode(ledPIN , OUTPUT);
+
+  // Establece los pines de control del primer motor como salidas
+  pinMode(pinEnableA, OUTPUT);
+  pinMode(pinInput1A, OUTPUT);
+  pinMode(pinInput2A, OUTPUT);
+
+  // Establece los pines de control del segundo motor como salidas
+  pinMode(pinEnableB, OUTPUT);
+  pinMode(pinInput1B, OUTPUT);
+  pinMode(pinInput2B, OUTPUT);
+}
+
+void loop() {
+
+  //led
+  digitalWrite(ledPIN , HIGH);   // poner el Pin en HIGH
+  delay(1000);                   // esperar un segundo
+  digitalWrite(ledPIN , LOW);    // poner el Pin en LOW
+  delay(1000); 
+
+
+    int sensorValue = analogRead(sensorPin);  // Lee el valor analógico en A1
+
+  if (sensorValue > sensorThreshold) {
+    Serial.println("1");  // Muestra "1" en la consola
+  } else {
+    Serial.println("0");  // Muestra "0" en la consola
+  }
+
+  delay(100);  // Espera 100 milisegundos antes de repetir el bucle
+
+  // Enciende ambos motores hacia adelante durante 2 segundos
+  motorForward(pinEnableA, pinInput1A, pinInput2A);
+  motorForward(pinEnableB, pinInput1B, pinInput2B);
+  delay(2000);
+
+  // Detiene ambos motores durante 1 segundo
+  motorStop(pinEnableA);
+  motorStop(pinEnableB);
+  delay(1000);
+
+  // Cambia la dirección de ambos motores y enciéndelos durante 2 segundos
+  motorBackward(pinEnableA, pinInput1A, pinInput2A);
+  motorBackward(pinEnableB, pinInput1B, pinInput2B);
+  delay(2000);
+
+  // Detiene ambos motores durante 1 segundo
+  motorStop(pinEnableA);
+  motorStop(pinEnableB);
+  delay(1000);
+
+
+
+}
+
+ 
+
+
+// Función para encender un motor en una dirección hacia adelante
+void motorForward(int pinEnable, int pinInput1, int pinInput2) {
+  digitalWrite(pinEnable, HIGH);  // Activa el puente H
+  digitalWrite(pinInput1, HIGH);  // Establece el sentido de giro
+  digitalWrite(pinInput2, LOW);
+}
+
+// Función para encender un motor en una dirección hacia atrás
+void motorBackward(int pinEnable, int pinInput1, int pinInput2) {
+  digitalWrite(pinEnable, HIGH);  // Activa el puente H
+  digitalWrite(pinInput1, LOW);  // Establece el sentido de giro
+  digitalWrite(pinInput2, HIGH);
+}
+
+// Función para detener un motor
+void motorStop(int pinEnable) {
+  digitalWrite(pinEnable, LOW);  // Desactiva el puente H
+}
